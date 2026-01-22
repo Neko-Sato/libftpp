@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 14:42:43 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/22 18:47:26 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/22 19:47:46 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,14 @@ void prompt(std::string const &question, T &dest) {
   std::string tmp;
   for (;;) {
     threadSafeCout << question;
-    std::cin >> dest;
-    threadSafeCout << std::endl;
-    if (std::cin)
+    std::string tmp;
+    std::getline(std::cin, tmp);
+    if (!std::cin)
+      throw std::runtime_error("input stream error");
+    std::istringstream iss(tmp);
+    iss >> dest;
+    if (iss)
       break;
-    std::cin.clear();
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    threadSafeCout << "\033[F" << std::endl;
   }
 }

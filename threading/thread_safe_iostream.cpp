@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 15:30:58 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/22 18:42:06 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/22 19:38:37 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ ThreadSafeBuf::int_type ThreadSafeBuf::overflow(int_type ch) {
   try {
     if (!_lk.owns_lock()) {
       _lk.lock();
-      std::cout.rdbuf()->sputn(_prefix.c_str(), _prefix.size());
+      std::cout.write(_prefix.c_str(), _prefix.size());
     }
-    std::cout.rdbuf()->sputc(ch);
+    std::cout.put(ch);
     if (ch == '\n') {
       _lk.unlock();
     }
