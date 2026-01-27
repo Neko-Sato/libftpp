@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 12:04:36 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/22 12:24:02 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/28 08:03:42 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ template <typename TEvent>
 void Observer<TEvent>::subscribe(
   TEvent const &event,
   std::function<void()> const &lambda) {
-  _map.emplace(event, lambda);
+  _map.try_emplace(event, lambda);
 }
 
 template <typename TEvent>

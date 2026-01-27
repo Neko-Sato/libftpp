@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 12:54:56 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/22 14:34:11 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/28 08:04:26 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 #include <optional>
 #include <unordered_set>
 #include <unordered_map>
+
+template <typename T1, typename T2>
+struct PairHash {
+  std::size_t operator()(std::pair<T1, T2> const &p) const;
+};
 
 template <typename TState>
 class StateMachine {
@@ -28,14 +33,10 @@ public:
   void update();
 
 private:
-  struct _pair_hash {
-    std::size_t operator()(std::pair<TState, TState> const &p) const;
-  };
-
   using _States =
     std::unordered_set<TState>;
   using _Transitions = 
-    std::unordered_map<std::pair<TState, TState>, std::function<void()>, _pair_hash>;
+    std::unordered_map<std::pair<TState, TState>, std::function<void()>, PairHash>;
   using _Actions = 
     std::unordered_map<TState, std::function<void()>>;
 
@@ -46,17 +47,17 @@ private:
   std::optional<TState> _cur;
 };
 
-template <typename TState>
-std::size_t StateMachine<TState>::_pair_hash::operator()(std::pair<TState, TState> const &p) const {
-  std::size_t h1 = std::hash<TState>{}(p.first);
-  std::size_t h2 = std::hash<TState>{}(p.second);
+template <typename T1, typename T2>
+std::size_t PairHash<T1, T2>::operator()(std::pair<T1, T2> const &p) const {
+  std::size_t h1 = std::hash<T1>{}(p.first);
+  std::size_t h2 = std::hash<T2>{}(p.second);
   return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
 }
 
 template <typename TState>
 void StateMachine<TState>::addState(
   TState const &state) {
-  auto [it, inserted] = _states.emplace(state);
+  auto [it, inserted] = _states.try_emplace(state);
   if (!inserted)
     throw std::invalid_argument("state exists");
   if (!_cur)
@@ -70,7 +71,7 @@ void StateMachine<TState>::addTransition(
   std::function<void()> const &lambda) {
   if (_states.find(startState) == _states.end() || _states.find(finalState) == _states.end())
     throw std::invalid_argument("unknown state");
-  auto [it, inserted] = _transitions.emplace(std::make_pair(startState, finalState), lambda);
+  auto [it, inserted] = _transitions.try_emplace(std::make_pair(startState, finalState), lambda);
   if (!inserted)
     throw std::invalid_argument("transition exists");
 }
@@ -81,7 +82,7 @@ void StateMachine<TState>::addAction(
   std::function<void()> const &lambda) {
   if (_states.find(state) == _states.end())
     throw std::invalid_argument("unknown state");
-  auto [it, inserted] = _actions.emplace(state, lambda);
+  auto [it, inserted] = _actions.try_emplace(state, lambda);
   if (!inserted)
     throw std::invalid_argument("action exists");
 }
