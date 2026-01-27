@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/19 05:27:18 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 08:02:17 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/28 08:05:04 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ typename Pool<TType>::Object Pool<TType>::acquire(TArgs &&...p_args) {
     [](auto const &slot) { return !slot.has_value(); });  
   if (it == _buffer.end())
     throw std::runtime_error("Pool exhausted");
-  it->try_emplace(std::forward<TArgs>(p_args)...);
+  it->emplace(std::forward<TArgs>(p_args)...);
   return Pool<TType>::Object(this, std::distance(_buffer.begin(), it));
 }
 
