@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 14:42:43 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 09:38:56 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/28 09:41:30 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ BasicThreadSafeStreamBuf<CharT, Traits>::overflow(int_type ch) {
   _tryLock();
   _dest->sputc(traits_type::to_char_type(ch));
   if (traits_type::eq(traits_type::to_char_type(ch), char_type('\n')))
-    _getState().lock.unlock();
+    resetLine();
   return traits_type::not_eof(ch);
 }
 
@@ -168,7 +168,7 @@ std::streamsize BasicThreadSafeStreamBuf<CharT, Traits>::xsputn(
     _tryLock();
     _dest->sputn(s, chunk);
     if (state.lock.owns_lock())
-      _getState().lock.unlock();
+      resetLine();
     s += chunk;
     n -= chunk;
     total += chunk;
