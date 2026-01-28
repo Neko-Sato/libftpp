@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 14:42:43 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 07:57:15 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/28 09:38:56 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <mutex>
 #include <unordered_map>
 #include <string>
-#include <thread>
 
 template<typename T, typename V>
 thread_local std::unordered_map<T, V> threadLocalMap;
@@ -54,6 +53,7 @@ private:
   };
 
   _State &_getState();
+  void _tryLock();
 };
 
 using ThreadSafeStreamBuf = BasicThreadSafeStreamBuf<char>;
@@ -113,6 +113,18 @@ BasicThreadSafeStreamBuf<CharT, Traits>::_getState() {
 }
 
 template <typename CharT, typename Traits>
+void BasicThreadSafeStreamBuf<CharT, Traits>::_tryLock() {
+  auto &state = _getState();
+  if (!state.lock.owns_lock()) {
+    state.lock.lock();
+    _dest->sputc(char_type('['));
+    _dest->sputn(state.prefix.data(), state.prefix.size());
+    _dest->sputc(char_type(']'));
+    _dest->sputc(char_type(' '));
+  }
+}
+
+template <typename CharT, typename Traits>
 void BasicThreadSafeStreamBuf<CharT, Traits>::setPrefix(
   std::basic_string<CharT, Traits> const &prefix) {
   auto &state = _getState();
@@ -131,43 +143,32 @@ BasicThreadSafeStreamBuf<CharT, Traits>::int_type
 BasicThreadSafeStreamBuf<CharT, Traits>::overflow(int_type ch) {
   if (traits_type::eq_int_type(ch, traits_type::eof()))
     return traits_type::not_eof(ch);
-  auto &state = _getState();
-  if (!state.lock.owns_lock()) {
-    state.lock.lock();
-    _dest->sputn(state.prefix.data(), state.prefix.size());
-  }
+  _tryLock();
   _dest->sputc(traits_type::to_char_type(ch));
   if (traits_type::eq(traits_type::to_char_type(ch), char_type('\n')))
-    state.lock.unlock();
+    _getState().lock.unlock();
   return traits_type::not_eof(ch);
 }
 
 template <typename CharT, typename Traits>
 std::streamsize BasicThreadSafeStreamBuf<CharT, Traits>::xsputn(
   char_type const *s, std::streamsize n) {
-  auto &state = _getState();
   std::streamsize total = 0;
   while (n > 0) {
     char_type const*nl = std::find(s, s + n, char_type('\n'));
     if (nl == s + n) {
       if (n) {
-        if (!state.lock.owns_lock()) {
-          state.lock.lock();
-          _dest->sputn(state.prefix.data(), state.prefix.size());
-        }
+        _tryLock();
         _dest->sputn(s, n);
         total += n;
       }
       break;
     }
     std::streamsize chunk = (nl - s) + 1;
-    if (!state.lock.owns_lock()) {
-      state.lock.lock();
-      _dest->sputn(state.prefix.data(), state.prefix.size());
-    }
+    _tryLock();
     _dest->sputn(s, chunk);
     if (state.lock.owns_lock())
-      state.lock.unlock();
+      _getState().lock.unlock();
     s += chunk;
     n -= chunk;
     total += chunk;
