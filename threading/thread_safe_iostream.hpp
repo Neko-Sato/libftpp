@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 14:42:43 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 09:41:30 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/28 11:13:55 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,8 +167,7 @@ std::streamsize BasicThreadSafeStreamBuf<CharT, Traits>::xsputn(
     std::streamsize chunk = (nl - s) + 1;
     _tryLock();
     _dest->sputn(s, chunk);
-    if (state.lock.owns_lock())
-      resetLine();
+    resetLine();
     s += chunk;
     n -= chunk;
     total += chunk;
