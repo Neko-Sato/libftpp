@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:12:24 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 11:12:48 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/30 12:30:33 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void WorkerPool::addJob(std::function<void()> const &jobToExecute) {
 
 void WorkerPool::_worker() {
   for (;;) {
-    std::function<void()> job;
+    decltype(_queue)::value_type job;
     {
       std::unique_lock<std::mutex> lock(_mtx);
       _cond.wait(lock, [this]{ return !_active || !_queue.empty(); });

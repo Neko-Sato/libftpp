@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 14:42:43 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 11:13:55 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/31 14:20:04 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,50 @@
 #include <unordered_map>
 #include <string>
 
-template<typename T, typename V>
-thread_local std::unordered_map<T, V> threadLocalMap;
+/// 
+template <typename T>
+class TLS {
+public:
+  ~TLS();
+
+  T &operator*();
+  T const &operator*() const;
+  T *operator->();
+  T const *operator->() const;
+
+private:
+  static thread_local std::unordered_map<TLS const *, T> _map;
+};
+
+template <typename T>
+thread_local std::unordered_map<TLS<T> const *, T> TLS<T>::_map;
+
+template <typename T>
+TLS<T>::~TLS() {
+  _map.erase(this);
+}
+
+template <typename T>
+T &TLS<T>::operator*() {
+  return _map[this];
+}
+
+template <typename T>
+T const &TLS<T>::operator*() const {
+  return _map[this];
+}
+
+template <typename T>
+T *TLS<T>::operator->() {
+  return &_map[this];
+}
+
+template <typename T>
+T const *TLS<T>::operator->() const {
+  return &_map[this];
+}
+
+///
 
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class BasicThreadSafeStreamBuf : public std::basic_streambuf<CharT, Traits> {
@@ -31,7 +73,6 @@ public:
   using off_type = typename traits_type::off_type;
 
   BasicThreadSafeStreamBuf(std::basic_streambuf<CharT, Traits> *dest);
-  ~BasicThreadSafeStreamBuf();
 
   void setPrefix(std::basic_string<CharT, Traits> const &prefix);
   void resetLine();
@@ -45,14 +86,11 @@ private:
   std::basic_streambuf<CharT, Traits> *_dest;
   std::mutex _mtx;
 
-  struct _State {
-    _State(std::mutex& m);
-
+  struct _TLSMember {
     std::basic_string<CharT, Traits> prefix;
     std::unique_lock<std::mutex> lock;
   };
-
-  _State &_getState();
+  TLS<_TLSMember> _tls;
   void _tryLock();
 };
 
@@ -96,46 +134,27 @@ BasicThreadSafeStreamBuf<CharT, Traits>::BasicThreadSafeStreamBuf(
 }
 
 template <typename CharT, typename Traits>
-BasicThreadSafeStreamBuf<CharT, Traits>::~BasicThreadSafeStreamBuf() {
-  threadLocalMap<decltype(this), _State>.erase(this);
-}
-
-template <typename CharT, typename Traits>
-BasicThreadSafeStreamBuf<CharT, Traits>::_State::_State(std::mutex &m)
-  : lock(m, std::defer_lock) {
-}
-
-template <typename CharT, typename Traits>
-BasicThreadSafeStreamBuf<CharT, Traits>::_State &
-BasicThreadSafeStreamBuf<CharT, Traits>::_getState() {
-  auto [it, inserted] = threadLocalMap<decltype(this), _State>.try_emplace(this, _mtx);
-  return it->second;
-}
-
-template <typename CharT, typename Traits>
 void BasicThreadSafeStreamBuf<CharT, Traits>::_tryLock() {
-  auto &state = _getState();
-  if (!state.lock.owns_lock()) {
-    state.lock.lock();
-    _dest->sputc(char_type('['));
-    _dest->sputn(state.prefix.data(), state.prefix.size());
-    _dest->sputc(char_type(']'));
-    _dest->sputc(char_type(' '));
+  auto &tlsMem = *_tls;
+  if (!tlsMem.lock.owns_lock()) {
+    if (!tlsMem.lock.mutex())
+      tlsMem.lock = std::unique_lock<std::mutex>(_mtx, std::defer_lock);
+    tlsMem.lock.lock();
+    _dest->sputn(tlsMem.prefix.data(), tlsMem.prefix.size());
   }
 }
 
 template <typename CharT, typename Traits>
 void BasicThreadSafeStreamBuf<CharT, Traits>::setPrefix(
   std::basic_string<CharT, Traits> const &prefix) {
-  auto &state = _getState();
-  state.prefix = prefix;
+  _tls->prefix = prefix;
 }
 
 template <typename CharT, typename Traits>
 void BasicThreadSafeStreamBuf<CharT, Traits>::resetLine() {
-  auto &state = _getState();
-  if (state.lock.owns_lock())
-    state.lock.unlock();
+  auto &lock = _tls->lock;
+  if (lock.owns_lock())
+    lock.unlock();
 }
 
 template <typename CharT, typename Traits>
