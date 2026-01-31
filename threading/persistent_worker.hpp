@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:30:21 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 12:07:38 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/31 23:16:30 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <functional>
 #include <list>
 #include <unordered_map>
-
+#include "thread.hpp"
 
 class PersistentWorker {
 public:
@@ -26,10 +26,21 @@ public:
   void removeTask(std::string const &name);
 
 private:
-  using _Tasks = std::list<std::function<void()>>;
-  using _TaskMap = std::unordered_map<std::string, _Tasks::iterator>;
+  struct _Task {
+    std::string name;
+    bool removed;
+    std::function<void()> fun;
+  };
+  
+  using _Tasks = std::list<_Task>;
+  using _TasksMap = std::unordered_map<std::string_view, _Tasks::iterator>;
 
+  bool _active;
+  Thread _thread;
   std::mutex _mtx;
+  std::condition_variable _cond;
   _Tasks _tasks;
-  _TaskMap _taskMap;
+  _TasksMap _tasksMap;
+
+  void _worker();
 };

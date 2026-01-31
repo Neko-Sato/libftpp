@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 14:42:43 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/31 14:20:04 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/01/31 23:29:40 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ extern template class BasicThreadSafeOStream<char>;
 extern template class BasicThreadSafeOStream<wchar_t>;
 
 extern thread_local ThreadSafeOStream threadSafeCout;
-extern thread_local ThreadSafeWOStream threadWSafeCout;
+extern thread_local ThreadSafeWOStream threadSafeWCout;
 
 template <typename CharT, typename Traits>
 BasicThreadSafeStreamBuf<CharT, Traits>::BasicThreadSafeStreamBuf(
