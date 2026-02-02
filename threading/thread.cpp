@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 09:11:39 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/31 14:21:34 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/02 11:57:00 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@ Thread::Thread(std::string const &name, std::function<void()> functToExecute)
     threadSafeCout.setPrefix(std::format("[{}] ", name));
     functToExecute();
   }) {
+}
+
+Thread::~Thread() {
+  stop();
 }
 
 void Thread::start() {

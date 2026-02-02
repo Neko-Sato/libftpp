@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 14:42:43 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/31 23:29:40 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/02 11:47:49 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,11 @@ public:
 
   BasicThreadSafeStreamBuf(std::basic_streambuf<CharT, Traits> *dest);
 
+  BasicThreadSafeOStreamBuf(BasicThreadSafeStreamBuf const &) = delete;
+  BasicThreadSafeStreamBuf &operator=(BasicThreadSafeStreamBuf const &) = delete;
+  BasicThreadSafeStreamBuf(BasicThreadSafeStreamBuf &&) = delete;
+  BasicThreadSafeStreamBuf &operator=(BasicThreadSafeStreamBuf &&) = delete;
+
   void setPrefix(std::basic_string<CharT, Traits> const &prefix);
   void resetLine();
 
@@ -84,7 +89,7 @@ protected:
 
 private:
   std::basic_streambuf<CharT, Traits> *_dest;
-  std::mutex _mtx;
+  mutable std::mutex _mtx;
 
   struct _TLSMember {
     std::basic_string<CharT, Traits> prefix;
@@ -106,7 +111,12 @@ public:
   using pos_type = typename traits_type::pos_type;
   using off_type = typename traits_type::off_type;
 
-  explicit BasicThreadSafeOStream(BasicThreadSafeStreamBuf<CharT, Traits> *buf);
+  BasicThreadSafeOStream(BasicThreadSafeStreamBuf<CharT, Traits> *buf);
+
+  BasicThreadSafeOStream(BasicThreadSafeOStream const &) = delete;
+  BasicThreadSafeOStream &operator=(BasicThreadSafeOStream const &) = delete;
+  BasicThreadSafeOStream(BasicThreadSafeOStream &&) = delete;
+  BasicThreadSafeOStream &operator=(BasicThreadSafeOStream &&) = delete;
 
   void setPrefix(std::basic_string<CharT, Traits> const &prefix);
   void resetLine();

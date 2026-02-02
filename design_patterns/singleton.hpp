@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 12:26:59 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/22 13:22:22 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/02 11:40:08 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,18 @@
 template<typename TType>
 class Singleton {
 public:
-  static TType* instance();
-  template<typename ...TArgs> 
-  static void instantiate(TArgs &&...p_args);
-
-private:
   Singleton() = delete;
   ~Singleton() = delete;
   Singleton(Singleton const&) = delete;
   Singleton& operator=(Singleton const&) = delete;
   Singleton(Singleton&&) = delete;
-  Singleton& operator=(Singleton&&) = delete;    
+  Singleton& operator=(Singleton&&) = delete;
 
+  static TType* instance();
+  template<typename ...TArgs> 
+  static void instantiate(TArgs &&...p_args);
+
+private:
   static std::optional<TType> _instance;
 };
 

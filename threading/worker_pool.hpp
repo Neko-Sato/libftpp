@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 09:43:25 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 11:12:42 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/02 11:57:17 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,18 @@ public:
   WorkerPool(std::size_t n);
   ~WorkerPool();
 
+  WorkerPool(WorkerPool const &) = delete;
+  WorkerPool &operator=(WorkerPool const &) = delete;
+  WorkerPool(WorkerPool &&) = delete;
+  WorkerPool &operator=(WorkerPool &&) = delete;
+
   void addJob(std::function<void()> const &jobToExecute);
 
 private:
   bool _active;
   std::vector<Thread> _pool;
   std::queue<std::function<void()>> _queue;
-  std::mutex _mtx;
+  mutable std::mutex _mtx;
   std::condition_variable _cond;
 
   void _worker();

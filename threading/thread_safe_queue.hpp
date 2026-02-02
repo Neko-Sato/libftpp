@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 18:49:52 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 08:34:55 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/02 11:54:51 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,45 +24,49 @@ public:
   using size_type = typename container_type::size_type;
   static_assert(std::is_same<TType, value_type>::value, "");
 
+  ThreadSafeQueue(ThreadSafeQueue const &) = delete;
+  ThreadSafeQueue(ThreadSafeQueue &&) = delete;
+  ThreadSafeQueue &operator=(ThreadSafeQueue const &) = delete;
+  ThreadSafeQueue &operator=(ThreadSafeQueue &&) = delete;
+
   void push_back(TType const &newElement);
   void push_front(TType const &newElement);
   TType pop_back();
   TType pop_front();
 
-protected:
-  container_type c;
 private:
-  std::mutex _mtx;
+  container_type _container;
+  mutable std::mutex _mtx;
 };
 
 template <typename TType, typename Container>
 void ThreadSafeQueue<TType, Container>::push_back(TType const &newElement) {
   std::lock_guard<std::mutex> lock(_mtx);
-  c.push_back(newElement);
+  _container.push_back(newElement);
 };
 
 template <typename TType, typename Container>
 void ThreadSafeQueue<TType, Container>::push_front(TType const &newElement) {
   std::lock_guard<std::mutex> lock(_mtx);
-  c.push_front(newElement);
+  _container.push_front(newElement);
 };
 
 template <typename TType, typename Container>
 TType ThreadSafeQueue<TType, Container>::pop_back() {
   std::lock_guard<std::mutex> lock(_mtx);
-  if (c.empty())
+  if (_container.empty())
       throw std::runtime_error("pop from empty queue");
-  TType tmp = std::move(c.back());
-  c.pop_back();
+  TType tmp = std::move(_container.back());
+  _container.pop_back();
   return tmp;
 };
 
 template <typename TType, typename Container>
 TType ThreadSafeQueue<TType, Container>::pop_front() {
   std::lock_guard<std::mutex> lock(_mtx);
-  if (c.empty())
+  if (_container.empty())
       throw std::runtime_error("pop from empty queue");
-  TType tmp = std::move(c.front());
-  c.pop_front();
+  TType tmp = std::move(_container.front());
+  _container.pop_front();
   return tmp;
 };

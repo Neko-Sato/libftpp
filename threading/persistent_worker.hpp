@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:30:21 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/31 23:16:30 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/02 11:44:40 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@ class PersistentWorker {
 public:
   PersistentWorker();
   ~PersistentWorker();
+
+  PersistentWorker(PersistentWorker const &) = delete;
+  PersistentWorker &operator=(PersistentWorker const &) = delete;
+  PersistentWorker(PersistentWorker &&) = delete;
+  PersistentWorker &operator=(PersistentWorker &&) = delete;
 
   void addTask(std::string const &name, std::function<void()> const &jobToExecute);
   void removeTask(std::string const &name);
@@ -37,7 +42,7 @@ private:
 
   bool _active;
   Thread _thread;
-  std::mutex _mtx;
+  mutable std::mutex _mtx;
   std::condition_variable _cond;
   _Tasks _tasks;
   _TasksMap _tasksMap;
