@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 13:56:07 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/02 22:16:07 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/03 18:20:50 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ IVector<T, D>::IVector(Ts &&...args) requires (sizeof...(Ts) == D)
 template <typename T, std::size_t D>
 template <typename U>
 IVector<T, D>::operator IVector<U, D>() const {
-  return [this]<std::size_t ...Is>(std::index_sequence<Is...>) {
+  return [&]<std::size_t ...Is>(std::index_sequence<Is...>) {
     return IVector<U, D>(static_cast<U>(_data[Is])...);
   }(std::make_index_sequence<D>{});
 }
@@ -141,7 +141,7 @@ auto IVector<T, D>::normalize() const {
 template <typename T, std::size_t D>
 template <typename U>
 auto IVector<T, D>::dot(IVector<U, D> const &other) const {
-  return [this, &other]<std::size_t ...Is>(std::index_sequence<Is...>) {
+  return [&]<std::size_t ...Is>(std::index_sequence<Is...>) {
     return ((_data[Is] * other[Is]) + ... + std::common_type_t<T, U>{});
   }(std::make_index_sequence<D>{});
 }
