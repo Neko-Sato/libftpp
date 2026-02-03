@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 13:56:07 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/02 22:16:28 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/04 01:52:29 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 #include "ivector2.hpp"
 
 template <typename T>
-class IVector3 : public IVector<T, 3>{
+class IVector3 {
 public:
-  T &x, &y, &z;
+  T x, y, z;
   
   IVector3();
   IVector3(IVector<T, 3> const &vec);
@@ -27,6 +27,9 @@ public:
   IVector3<float> normalize() const;
   float dot(IVector3<T> const &other) const;
   IVector3<float> cross(IVector3<T> const &other) const;
+
+  bool operator==(IVector3<T> const &rhs) const;
+  bool operator!=(IVector3<T> const &rhs) const;
 
   #define DECL_IVECTOR3_OP(OP) \
     IVector3<T> operator OP(IVector3<T> const &rhs) const; \
@@ -42,32 +45,32 @@ public:
 
 template <typename T>
 IVector3<T>::IVector3()
-  : IVector<T, 3>(), x((*this)[0]), y((*this)[1]), z((*this)[2]) {
+  : IVector3<T>(0, 0, 0) {
 }
 
 template <typename T>
 IVector3<T>::IVector3(IVector<T, 3> const &vec)
-  : IVector<T, 3>(vec), x((*this)[0]), y((*this)[1]), z((*this)[2]) {
+  : x(vec[0]), y(vec[1]), z(vec[2]) {
 }
 
 template <typename T>
 IVector3<T>::IVector3(T const &x_val, T const &y_val, T const &z_val)
-  : IVector<T, 3>(x_val, y_val, z_val), x((*this)[0]), y((*this)[1]), z((*this)[2]) {
+  : x(x_val), y(y_val), z(z_val) {
 }
 
 template <typename T>
 float IVector3<T>::length() const {
-  return static_cast<IVector<float, 3>>(*this).length();
+  return IVector<float, 3>(x, y, z).length();
 }
 
 template <typename T>
 IVector3<float> IVector3<T>::normalize() const {
-  return static_cast<IVector<float, 3>>(*this).normalize();
+  return IVector<float, 3>(x, y, z).normalize();
 }
 
 template <typename T>
 float IVector3<T>::dot(IVector3<T> const &other) const {
-  return static_cast<IVector<float, 3>>(*this).dot(other);
+  return IVector<float, 3>(x, y, z).dot(IVector<float, 3>(other.x, other.y, other.z));
 }
 
 template <typename T>
@@ -79,14 +82,25 @@ IVector3<float> IVector3<T>::cross(IVector3<T> const &other) const {
   );
 }
 
+template <typename T>
+bool IVector3<T>::operator==(IVector3<T> const &rhs) const {
+  return IVector<T, 3>(x, y, z) == IVector<T, 3>(rhs.x, rhs.y, rhs.z);
+}
+
+template <typename T>
+bool IVector3<T>::operator!=(IVector3<T> const &rhs) const {
+  return IVector<T, 3>(x, y, z) != IVector<T, 3>(rhs.x, rhs.y, rhs.z);
+}
+
+
 #define DEFINE_IVECTOR3_OP(OP) \
 template <typename T> \
 IVector3<T> IVector3<T>::operator OP(IVector3<T> const &rhs) const { \
-  return IVector<T, 3>::operator OP(static_cast<IVector<T, 3>>(rhs)); \
+  return IVector<T, 3>(x, y, z) OP IVector<T, 3>(rhs.x, rhs.y, rhs.z); \
 } \
 template <typename T> \
 IVector3<T> IVector3<T>::operator OP(T const &rhs) const { \
-  return IVector<T, 3>::operator OP(rhs); \
+  return IVector<T, 3>(x, y, z) OP rhs; \
 }
 
 DEFINE_IVECTOR3_OP(+)

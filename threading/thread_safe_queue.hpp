@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 18:49:52 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/02 11:54:51 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/03 19:54:16 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ public:
   using size_type = typename container_type::size_type;
   static_assert(std::is_same<TType, value_type>::value, "");
 
-  ThreadSafeQueue(ThreadSafeQueue const &) = delete;
-  ThreadSafeQueue(ThreadSafeQueue &&) = delete;
-  ThreadSafeQueue &operator=(ThreadSafeQueue const &) = delete;
-  ThreadSafeQueue &operator=(ThreadSafeQueue &&) = delete;
+  ThreadSafeQueue(ThreadSafeQueue const &rhs);
+  ThreadSafeQueue(ThreadSafeQueue &&rhs);
+  ThreadSafeQueue &operator=(ThreadSafeQueue const &rhs);
+  ThreadSafeQueue &operator=(ThreadSafeQueue &&rhs);
 
   void push_back(TType const &newElement);
   void push_front(TType const &newElement);
@@ -37,6 +37,42 @@ public:
 private:
   container_type _container;
   mutable std::mutex _mtx;
+};
+
+template <typename TType, typename Container>
+ThreadSafeQueue<TType, Container>::ThreadSafeQueue(ThreadSafeQueue const &rhs)
+  : _container([&]() {
+    std::lock_guard<std::mutex> lock(rhs._mtx);
+    return rhs._container;
+  }()) {
+};
+
+template <typename TType, typename Container>
+ThreadSafeQueue<TType, Container>::ThreadSafeQueue(ThreadSafeQueue &&rhs)
+  : _container([&]{
+    std::lock_guard<std::mutex> lock(rhs._mtx);
+    return std::move(rhs._container);
+  }()) {
+};
+
+template <typename TType, typename Container>
+ThreadSafeQueue<TType, Container>
+&ThreadSafeQueue<TType, Container>::operator=(ThreadSafeQueue const &rhs) {
+  if (this != &rhs) {
+    ThreadSafeQueue tmp(rhs);
+    *this = std::move(tmp);
+  }
+  return *this;
+};
+
+template <typename TType, typename Container>
+ThreadSafeQueue<TType, Container>
+&ThreadSafeQueue<TType, Container>::operator=(ThreadSafeQueue &&rhs) {
+  if (this != &rhs) {
+    std::lock_guard<std::mutex> lock1(_mtx), lock2(rhs._mtx);
+    _container = std::move(rhs._container);
+  }
+  return *this;
 };
 
 template <typename TType, typename Container>

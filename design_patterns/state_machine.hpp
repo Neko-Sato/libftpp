@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 12:54:56 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/28 08:04:26 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/04 01:10:55 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ struct PairHash {
 template <typename TState>
 class StateMachine {
 public:
+  StateMachine(StateMachine const &) = delete;
+  StateMachine &operator=(StateMachine const &) = delete;
+
   void addState(TState const &state);
   void addTransition(TState const &startState, TState const &finalState,
     std::function<void()> const &lambda);

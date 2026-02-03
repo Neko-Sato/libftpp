@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 09:07:50 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/02 11:56:48 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/03 20:00:27 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,8 @@ public:
   Thread(std::string const &name, std::function<void()> functToExecute);
   ~Thread();
 
-  Thread() = delete;
   Thread(Thread const &) = delete;
   Thread &operator=(Thread const &) = delete;
-  Thread(Thread &&) = delete;
-  Thread &operator=(Thread &&) = delete;
 
   void start();
   void stop();
