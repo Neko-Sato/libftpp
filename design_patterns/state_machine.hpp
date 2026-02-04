@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 12:54:56 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/04 01:10:55 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/04 20:55:28 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,14 @@
 #include <unordered_set>
 #include <unordered_map>
 
+namespace std {
+
 template <typename T1, typename T2>
-struct PairHash {
-  std::size_t operator()(std::pair<T1, T2> const &p) const;
+struct hash<std::pair<T1, T2>> {
+  std::size_t operator()(std::pair<T1, T2> const &p) const noexcept;
 };
+
+}
 
 template <typename TState>
 class StateMachine {
@@ -39,7 +43,7 @@ private:
   using _States =
     std::unordered_set<TState>;
   using _Transitions = 
-    std::unordered_map<std::pair<TState, TState>, std::function<void()>, PairHash>;
+    std::unordered_map<std::pair<TState, TState>, std::function<void()>>;
   using _Actions = 
     std::unordered_map<TState, std::function<void()>>;
 
@@ -50,11 +54,15 @@ private:
   std::optional<TState> _cur;
 };
 
+namespace std {
+
 template <typename T1, typename T2>
-std::size_t PairHash<T1, T2>::operator()(std::pair<T1, T2> const &p) const {
+std::size_t hash<std::pair<T1, T2>>::operator()(std::pair<T1, T2> const &p) const noexcept {
   std::size_t h1 = std::hash<T1>{}(p.first);
   std::size_t h2 = std::hash<T2>{}(p.second);
-  return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
+  return h1 ^ (h2 + 0x9e3779b97f4a7c15ul + (h1 << 6) + (h1 >> 2));
+}
+
 }
 
 template <typename TState>
