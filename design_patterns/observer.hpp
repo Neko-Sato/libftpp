@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 12:04:36 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/04 01:11:14 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/07 15:34:58 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ public:
   void notify(TEvent const &event);
 
 private:
-  using _EventCallbackMap = \
+  using EventCallbackMap = \
     std::unordered_multimap<TEvent, std::function<void()>>;
-  _EventCallbackMap _map;
+  EventCallbackMap _map;
 };
 
 template <typename TEvent>

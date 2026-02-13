@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:30:21 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/02 11:44:40 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/07 15:36:06 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,21 +31,21 @@ public:
   void removeTask(std::string const &name);
 
 private:
-  struct _Task {
+  struct Task {
     std::string name;
     bool removed;
     std::function<void()> fun;
   };
   
-  using _Tasks = std::list<_Task>;
-  using _TasksMap = std::unordered_map<std::string_view, _Tasks::iterator>;
+  using Tasks = std::list<Task>;
+  using TasksMap = std::unordered_map<std::string_view, Tasks::iterator>;
 
   bool _active;
   Thread _thread;
   mutable std::mutex _mtx;
   std::condition_variable _cond;
-  _Tasks _tasks;
-  _TasksMap _tasksMap;
+  Tasks _tasks;
+  TasksMap _tasksMap;
 
   void _worker();
 };

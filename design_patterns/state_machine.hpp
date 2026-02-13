@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 12:54:56 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/04 20:55:28 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/07 15:34:54 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,16 @@ public:
   void update();
 
 private:
-  using _States =
+  using States =
     std::unordered_set<TState>;
-  using _Transitions = 
+  using Transitions = 
     std::unordered_map<std::pair<TState, TState>, std::function<void()>>;
-  using _Actions = 
+  using Actions = 
     std::unordered_map<TState, std::function<void()>>;
 
-  _States _states;
-  _Transitions _transitions;
-  _Actions _actions;
+  States _states;
+  Transitions _transitions;
+  Actions _actions;
 
   std::optional<TState> _cur;
 };

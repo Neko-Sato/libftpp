@@ -6,62 +6,91 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 14:42:43 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/02 11:47:49 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/13 17:38:26 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <iostream>
-#include <sstream>
-#include <mutex>
-#include <unordered_map>
-#include <string>
-
 /// 
-template <typename T>
-class TLS {
-public:
-  ~TLS();
+#include <unordered_map>
+#include <list>
+#include <mutex>
+#include <thread>
+#include <functional>
+#include <utility>
 
-  T &operator*();
-  T const &operator*() const;
-  T *operator->();
-  T const *operator->() const;
+template<typename T>
+class tls {
+public:
+  tls() = default;
+  ~tls();
+  tls(tls const &) = delete;
+  tls(tls &&) = delete;
+
+  tls &operator=(tls const &) = delete;
+  tls &operator=(tls &&) = delete;
+
+  T &get();
+  T const &get() const;
 
 private:
-  static thread_local std::unordered_map<TLS const *, T> _map;
+  static std::mutex _globalMtx;
+  using Entries = std::unordered_map<tls const *, T>;
+  using ThreadMap = std::unordered_map<std::thread::id, Entries>;
+  static ThreadMap _threadMap;
+  struct Local {
+    Local();
+    ~Local();
+  };
+  static thread_local Local _local;
 };
 
 template <typename T>
-thread_local std::unordered_map<TLS<T> const *, T> TLS<T>::_map;
+std::mutex tls<T>::_globalMtx;
 
 template <typename T>
-TLS<T>::~TLS() {
-  _map.erase(this);
+typename tls<T>::ThreadMap tls<T>::_threadMap;
+
+template <typename T>
+thread_local typename tls<T>::Local tls<T>::_local;
+
+template <typename T>
+tls<T>::Local::Local() {
+  std::lock_guard<std::mutex> lock(_globalMtx);
+  _threadMap.try_emplace(std::this_thread::get_id());
 }
 
 template <typename T>
-T &TLS<T>::operator*() {
-  return _map[this];
+tls<T>::Local::~Local() {
+  std::lock_guard<std::mutex> lock(_globalMtx);
+  _threadMap.erase(std::this_thread::get_id());
 }
 
 template <typename T>
-T const &TLS<T>::operator*() const {
-  return _map[this];
+tls<T>::~tls() {
+  std::lock_guard<std::mutex> lock(_globalMtx);
+  for (auto &entries : _threadMap)
+    entries.second.erase(this);
 }
 
 template <typename T>
-T *TLS<T>::operator->() {
-  return &_map[this];
+T &tls<T>::get() {
+  return _threadMap[std::this_thread::get_id()][this];
 }
 
 template <typename T>
-T const *TLS<T>::operator->() const {
-  return &_map[this];
+T const &tls<T>::get() const {
+  return _threadMap[std::this_thread::get_id()][this];
 }
 
 ///
+#include <iostream>
+#include <sstream>
+#include <memory>
+#include <mutex>
+#include <unordered_map>
+#include <string>
 
 template <typename CharT, typename Traits = std::char_traits<CharT>>
 class BasicThreadSafeStreamBuf : public std::basic_streambuf<CharT, Traits> {
@@ -73,11 +102,6 @@ public:
   using off_type = typename traits_type::off_type;
 
   BasicThreadSafeStreamBuf(std::basic_streambuf<CharT, Traits> *dest);
-
-  BasicThreadSafeOStreamBuf(BasicThreadSafeStreamBuf const &) = delete;
-  BasicThreadSafeStreamBuf &operator=(BasicThreadSafeStreamBuf const &) = delete;
-  BasicThreadSafeStreamBuf(BasicThreadSafeStreamBuf &&) = delete;
-  BasicThreadSafeStreamBuf &operator=(BasicThreadSafeStreamBuf &&) = delete;
 
   void setPrefix(std::basic_string<CharT, Traits> const &prefix);
   void resetLine();
@@ -91,11 +115,11 @@ private:
   std::basic_streambuf<CharT, Traits> *_dest;
   mutable std::mutex _mtx;
 
-  struct _TLSMember {
+  struct Local {
     std::basic_string<CharT, Traits> prefix;
     std::unique_lock<std::mutex> lock;
   };
-  TLS<_TLSMember> _tls;
+  tls<Local> _local;
   void _tryLock();
 };
 
@@ -112,11 +136,6 @@ public:
   using off_type = typename traits_type::off_type;
 
   BasicThreadSafeOStream(BasicThreadSafeStreamBuf<CharT, Traits> *buf);
-
-  BasicThreadSafeOStream(BasicThreadSafeOStream const &) = delete;
-  BasicThreadSafeOStream &operator=(BasicThreadSafeOStream const &) = delete;
-  BasicThreadSafeOStream(BasicThreadSafeOStream &&) = delete;
-  BasicThreadSafeOStream &operator=(BasicThreadSafeOStream &&) = delete;
 
   void setPrefix(std::basic_string<CharT, Traits> const &prefix);
   void resetLine();
@@ -145,26 +164,26 @@ BasicThreadSafeStreamBuf<CharT, Traits>::BasicThreadSafeStreamBuf(
 
 template <typename CharT, typename Traits>
 void BasicThreadSafeStreamBuf<CharT, Traits>::_tryLock() {
-  auto &tlsMem = *_tls;
-  if (!tlsMem.lock.owns_lock()) {
-    if (!tlsMem.lock.mutex())
-      tlsMem.lock = std::unique_lock<std::mutex>(_mtx, std::defer_lock);
-    tlsMem.lock.lock();
-    _dest->sputn(tlsMem.prefix.data(), tlsMem.prefix.size());
+  auto &local = _local.get();
+  if (!local.lock.owns_lock()) {
+    if (!local.lock.mutex())
+      local.lock = std::unique_lock<std::mutex>(_mtx, std::defer_lock);
+    local.lock.lock();
+    _dest->sputn(local.prefix.data(), local.prefix.size());
   }
 }
 
 template <typename CharT, typename Traits>
 void BasicThreadSafeStreamBuf<CharT, Traits>::setPrefix(
   std::basic_string<CharT, Traits> const &prefix) {
-  _tls->prefix = prefix;
+  _local.get().prefix = prefix;
 }
 
 template <typename CharT, typename Traits>
 void BasicThreadSafeStreamBuf<CharT, Traits>::resetLine() {
-  auto &lock = _tls->lock;
-  if (lock.owns_lock())
-    lock.unlock();
+  auto &local = _local.get();
+  if (local.lock.owns_lock())
+    local.lock.unlock();
 }
 
 template <typename CharT, typename Traits>

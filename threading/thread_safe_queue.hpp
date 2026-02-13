@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 18:49:52 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/03 19:54:16 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/06 23:49:37 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,8 @@ ThreadSafeQueue<TType, Container>::ThreadSafeQueue(ThreadSafeQueue &&rhs)
 template <typename TType, typename Container>
 ThreadSafeQueue<TType, Container>
 &ThreadSafeQueue<TType, Container>::operator=(ThreadSafeQueue const &rhs) {
-  if (this != &rhs) {
-    ThreadSafeQueue tmp(rhs);
-    *this = std::move(tmp);
-  }
+  if (this != &rhs)
+    *this = ThreadSafeQueue(rhs);
   return *this;
 };
 
@@ -92,7 +90,7 @@ TType ThreadSafeQueue<TType, Container>::pop_back() {
   std::lock_guard<std::mutex> lock(_mtx);
   if (_container.empty())
       throw std::runtime_error("pop from empty queue");
-  TType tmp = std::move(_container.back());
+  TType tmp(std::move(_container.back()));
   _container.pop_back();
   return tmp;
 };
@@ -102,7 +100,7 @@ TType ThreadSafeQueue<TType, Container>::pop_front() {
   std::lock_guard<std::mutex> lock(_mtx);
   if (_container.empty())
       throw std::runtime_error("pop from empty queue");
-  TType tmp = std::move(_container.front());
+  TType tmp(std::move(_container.front()));
   _container.pop_front();
   return tmp;
 };

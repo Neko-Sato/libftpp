@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/31 23:16:35 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/31 23:29:57 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/13 18:18:19 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void PersistentWorker::addTask(std::string const &name, std::function<void()> co
   std::lock_guard<std::mutex> lock(_mtx);
   if (_tasksMap.find(name) != _tasksMap.end())
     throw std::runtime_error("task exists");
-  _tasks.emplace_back(_Task{name, false, jobToExecute});
+  _tasks.emplace_back(Task{name, false, jobToExecute});
   _tasksMap.emplace(name, std::prev(_tasks.end()));
 }
 
