@@ -6,11 +6,15 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 10:47:25 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/16 01:45:08 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 02:05:07 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./data_buffer.hpp"
+
+DataBuffer::DataBuffer(std::byte const *data, std::size_t size)
+  : _buffer(data, data + size) {
+}
 
 DataBuffer& DataBuffer::operator<<(std::string const &rhs) {
   *this << rhs.size();
@@ -30,4 +34,8 @@ DataBuffer& DataBuffer::operator>>(std::string &rhs) {
   std::copy_n(_buffer.begin(), size, dest);
   _buffer.erase(_buffer.begin(), _buffer.begin() + size);
   return *this;
+}
+
+std::vector<std::byte> DataBuffer::data() const {
+  return std::vector(_buffer.begin(), _buffer.end());
 }

@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 09:15:40 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/22 11:10:16 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 02:09:36 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,14 @@
 #include <span>
 #include <string>
 #include <deque>
+#include <vector>
 #include <exception>
 
 class DataBuffer {
 public:
+  DataBuffer() = default;
+  DataBuffer(std::byte const *data, std::size_t size);
+
   template <typename T>
   requires std::is_trivially_copyable_v<std::remove_cvref_t<T>>  
   DataBuffer& operator<<(T const &rhs);
@@ -29,6 +33,8 @@ public:
   requires std::is_trivially_copyable_v<std::remove_cvref_t<T>>  
   DataBuffer& operator>>(T &rhs);
   DataBuffer& operator>>(std::string &rhs);
+
+  std::vector<std::byte> data() const;
 
 private:
   std::deque<std::byte> _buffer;
