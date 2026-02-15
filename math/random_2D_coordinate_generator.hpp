@@ -6,57 +6,48 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 23:55:08 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/04 01:21:27 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/15 18:02:39 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-long long splitmix64(long long x);
+#include <random>
 
-template <size_t D>
+template <size_t D, typename RNG=std::mt19937_64>
 class RandomCoordinateGenerator {
 public:
-  RandomCoordinateGenerator();
-  RandomCoordinateGenerator(long long seed);
+  RandomCoordinateGenerator(RNG::result_type value = RNG::default_seed);
 
-  long long seed() const;
-  void seed(long long seed);
+  RNG::result_type seed() const;
+  void seed(RNG::result_type seed);
   template <typename ...Args>
-  long long operator()(Args &&...args) requires (sizeof...(Args) == D) ;
+  RNG::result_type operator()(Args &&...args) requires (sizeof...(Args) == D) ;
 
 private:
-  long long _seed;
+  RNG::result_type _seed;
 
 };
 
-template <size_t D>
-RandomCoordinateGenerator<D>::RandomCoordinateGenerator()
-  : RandomCoordinateGenerator([] {
-      std::random_device rd;
-      return static_cast<long long>(rd()) << 32 | static_cast<long long>(rd());
-    }()) {
-}
-
-template <size_t D>
-RandomCoordinateGenerator<D>::RandomCoordinateGenerator(long long seed)
+template <size_t D, typename RNG>
+RandomCoordinateGenerator<D, RNG>::RandomCoordinateGenerator(RNG::result_type seed)
   : _seed(seed) {
 }
 
-template <size_t D>
-long long RandomCoordinateGenerator<D>::seed() const {
+template <size_t D, typename RNG>
+RNG::result_type RandomCoordinateGenerator<D, RNG>::seed() const {
   return _seed;
 }
 
-template <size_t D>
-void RandomCoordinateGenerator<D>::seed(long long seed) {
+template <size_t D, typename RNG>
+void RandomCoordinateGenerator<D, RNG>::seed(RNG::result_type seed) {
   _seed = seed;
 }
 
-template <size_t D>
+template <size_t D, typename RNG>
 template <typename ...Args>
-long long RandomCoordinateGenerator<D>::operator()(Args &&...args) requires (sizeof...(Args) == D)  {
-  return (splitmix64(splitmix64(_seed) ^ ... ^ splitmix64(std::forward<Args>(args))));
+RNG::result_type RandomCoordinateGenerator<D, RNG>::operator()(Args &&...args) requires (sizeof...(Args) == D)  {
+  return RNG{_seed}() ^ (RNG{std::forward<Args>(args)}() ^ ...);
 }
 
 using Random2DCoordinateGenerator = RandomCoordinateGenerator<2>;

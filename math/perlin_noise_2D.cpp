@@ -1,16 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   random_2D_coordinate_generator.cpp                 :+:      :+:    :+:   */
+/*   perlin_noise_2D.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/02 23:55:08 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/13 22:45:18 by hshimizu         ###   ########.fr       */
+/*   Created: 2026/02/03 18:36:13 by hshimizu          #+#    #+#             */
+/*   Updated: 2026/02/15 17:52:42 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "perlin_noise_2D.hpp"
 
-#include "random_2D_coordinate_generator.hpp"
-
-template class RandomCoordinateGenerator<2>;
+template class PerlinNoise2D<>;
