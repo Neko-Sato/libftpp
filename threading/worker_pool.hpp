@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 09:43:25 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/02 11:57:17 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:47:13 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <vector>
 #include <queue>
 #include <functional>
-#include "thread.hpp"
+#include "./thread.hpp"
 
 class WorkerPool {
 public:

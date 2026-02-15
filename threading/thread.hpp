@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 09:07:50 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/03 20:00:27 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:41:35 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@ public:
   ~Thread();
 
   Thread(Thread const &) = delete;
+  Thread(Thread &&) = default;
   Thread &operator=(Thread const &) = delete;
+  Thread &operator=(Thread &&) = default;
 
   void start();
   void stop();

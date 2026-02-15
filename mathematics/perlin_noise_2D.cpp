@@ -6,10 +6,10 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 18:36:13 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/15 17:52:42 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:45:56 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "perlin_noise_2D.hpp"
+#include "./perlin_noise_2D.hpp"
 
 template class PerlinNoise2D<>;

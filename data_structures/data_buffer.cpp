@@ -6,11 +6,11 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 10:47:25 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/22 11:15:07 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:45:08 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "data_buffer.hpp"
+#include "./data_buffer.hpp"
 
 DataBuffer& DataBuffer::operator<<(std::string const &rhs) {
   *this << rhs.size();

@@ -6,8 +6,8 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 22:17:57 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/02 22:18:00 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:45:43 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ivector3.hpp"
+#include "./ivector3.hpp"

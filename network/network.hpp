@@ -1,13 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ivector2.cpp                                       :+:      :+:    :+:   */
+/*   network.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/02 22:18:04 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/16 01:45:37 by hshimizu         ###   ########.fr       */
+/*   Created: 2026/01/31 23:33:13 by hshimizu          #+#    #+#             */
+/*   Updated: 2026/02/16 01:49:46 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./ivector2.hpp"
+#pragma once
+
+// #include "./message.hpp"
+// #include "./client.hpp"
+// #include "./server.hpp"

@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 12:04:36 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/07 15:34:58 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:25:27 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@ template <typename TEvent>
 class Observer {
 public:
   Observer(Observer const &) = delete;
+  Observer(Observer &&) = default;
   Observer &operator=(Observer const &) = delete;
+  Observer &operator=(Observer &&) = default;
 
   void subscribe(TEvent const &event, std::function<void()> const &lambda);
   void notify(TEvent const &event);

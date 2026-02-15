@@ -6,11 +6,11 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:12:24 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/30 12:30:33 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:47:09 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "worker_pool.hpp"
+#include "./worker_pool.hpp"
 
 WorkerPool::WorkerPool(std::size_t n)
   : _active(true) {

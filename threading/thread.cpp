@@ -6,11 +6,11 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 09:11:39 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/03 20:00:38 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:46:58 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "thread.hpp"
+#include "./thread.hpp"
 #include <format>
 
 Thread::Thread(std::string const &name, std::function<void()> functToExecute)

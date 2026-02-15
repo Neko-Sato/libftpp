@@ -6,11 +6,11 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 15:30:58 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/01/31 23:29:45 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 01:46:41 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "thread_safe_iostream.hpp"
+#include "./thread_safe_iostream.hpp"
 
 template class BasicThreadSafeStreamBuf<char>;
 template class BasicThreadSafeStreamBuf<wchar_t>;
