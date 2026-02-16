@@ -6,7 +6,7 @@
 #    By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/24 19:05:06 by hshimizu          #+#    #+#              #
-#    Updated: 2026/02/16 01:42:54 by hshimizu         ###   ########.fr        #
+#    Updated: 2026/02/17 08:58:30 by hshimizu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,9 @@ SRCS			:= \
 	./threading/thread.cpp \
 	./threading/worker_pool.cpp \
 	./threading/persistent_worker.cpp \
-	./design_patterns/memento.cpp
+	./design_patterns/memento.cpp \
+	./network/message.cpp \
+	./network/client.cpp
 
 OUTDIR		:= .out
 OBJS			:= $(addprefix $(OUTDIR)/, $(SRCS:.cpp=.o))

@@ -6,12 +6,12 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/31 23:33:13 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/16 01:49:46 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/16 04:25:17 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-// #include "./message.hpp"
+#include "./message.hpp"
 // #include "./client.hpp"
 // #include "./server.hpp"
