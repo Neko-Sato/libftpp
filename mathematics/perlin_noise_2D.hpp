@@ -6,7 +6,7 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/03 18:36:18 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/16 01:46:01 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/17 09:16:46 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <random>
 #include <cmath>
 #include <numbers>
-#include "./ivector2.hpp"
+#include "bonus/ivector.hpp"
 
 template <typename RNG=std::mt19937_64>
 class PerlinNoise2D {

@@ -6,13 +6,20 @@
 #    By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/24 19:05:06 by hshimizu          #+#    #+#              #
-#    Updated: 2026/02/17 08:58:30 by hshimizu         ###   ########.fr        #
+#    Updated: 2026/02/18 00:19:32 by hshimizu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME 			:= libftpp.a
 
 SRCS			:= \
+	./bonus/os_error.cpp \
+	./bonus/addrInfos.cpp \
+	./bonus/fcntl.cpp \
+	./bonus/os_error.cpp \
+	./bonus/selector.cpp \
+	./bonus/poll_selector.cpp \
+	./bonus/socket.cpp \
 	./data_structures/data_buffer.cpp \
 	./mathematics/perlin_noise_2D.cpp \
 	./mathematics/ivector2.cpp \
@@ -24,14 +31,14 @@ SRCS			:= \
 	./threading/persistent_worker.cpp \
 	./design_patterns/memento.cpp \
 	./network/message.cpp \
-	./network/client.cpp
+	# ./network/client.cpp
 
 OUTDIR		:= .out
 OBJS			:= $(addprefix $(OUTDIR)/, $(SRCS:.cpp=.o))
 DEPS			:= $(addprefix $(OUTDIR)/, $(SRCS:.cpp=.d))
 
-CXX				:= c++
-CXXFLAGS	:= -Wall -Wextra -Werror -std=c++23 -pedantic
+CXX				:= clang++
+CXXFLAGS	:= -Wall -Wextra -Werror -std=c++26 -pedantic
 CXXFLAGS	+= -fno-builtin -fno-common
 CXXFLAGS	+= -fPIC -MMD -MP
 AR				:= ar

@@ -6,13 +6,13 @@
 /*   By: hshimizu <hshimizu@42tokyo.student.jp>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/02 13:56:07 by hshimizu          #+#    #+#             */
-/*   Updated: 2026/02/16 01:45:46 by hshimizu         ###   ########.fr       */
+/*   Updated: 2026/02/17 09:16:31 by hshimizu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "./ivector2.hpp"
+#include "bonus/ivector.hpp"
 
 template <typename T>
 class IVector3 {
